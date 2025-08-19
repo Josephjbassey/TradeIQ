@@ -3,6 +3,9 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import Landing from "@/pages/landing";
+import SignIn from "@/pages/auth/signin";
+import SignUp from "@/pages/auth/signup";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/dashboard";
 import AddTrade from "@/pages/add-trade";
@@ -13,23 +16,89 @@ import RiskManagement from "@/pages/risk-management";
 import Education from "@/pages/education";
 import Sidebar from "@/components/layout/sidebar";
 
-function Router() {
+function AppRouter() {
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Switch>
-          <Route path="/" component={Dashboard} />
-          <Route path="/add-trade" component={AddTrade} />
-          <Route path="/portfolio" component={Portfolio} />
-          <Route path="/journal" component={Journal} />
-          <Route path="/ai-insights" component={AIInsights} />
-          <Route path="/risk-management" component={RiskManagement} />
-          <Route path="/education" component={Education} />
-          <Route component={NotFound} />
-        </Switch>
-      </div>
-    </div>
+    <Switch>
+      {/* Public Routes */}
+      <Route path="/" component={Landing} />
+      <Route path="/signin" component={SignIn} />
+      <Route path="/signup" component={SignUp} />
+      
+      {/* Protected Routes with Sidebar */}
+      <Route path="/dashboard">
+        {() => (
+          <div className="flex h-screen overflow-hidden">
+            <Sidebar />
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <Dashboard />
+            </div>
+          </div>
+        )}
+      </Route>
+      <Route path="/add-trade">
+        {() => (
+          <div className="flex h-screen overflow-hidden">
+            <Sidebar />
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <AddTrade />
+            </div>
+          </div>
+        )}
+      </Route>
+      <Route path="/portfolio">
+        {() => (
+          <div className="flex h-screen overflow-hidden">
+            <Sidebar />
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <Portfolio />
+            </div>
+          </div>
+        )}
+      </Route>
+      <Route path="/journal">
+        {() => (
+          <div className="flex h-screen overflow-hidden">
+            <Sidebar />
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <Journal />
+            </div>
+          </div>
+        )}
+      </Route>
+      <Route path="/ai-insights">
+        {() => (
+          <div className="flex h-screen overflow-hidden">
+            <Sidebar />
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <AIInsights />
+            </div>
+          </div>
+        )}
+      </Route>
+      <Route path="/risk-management">
+        {() => (
+          <div className="flex h-screen overflow-hidden">
+            <Sidebar />
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <RiskManagement />
+            </div>
+          </div>
+        )}
+      </Route>
+      <Route path="/education">
+        {() => (
+          <div className="flex h-screen overflow-hidden">
+            <Sidebar />
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <Education />
+            </div>
+          </div>
+        )}
+      </Route>
+      
+      {/* 404 Route */}
+      <Route component={NotFound} />
+    </Switch>
   );
 }
 
@@ -38,7 +107,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Router />
+        <AppRouter />
       </TooltipProvider>
     </QueryClientProvider>
   );
