@@ -8,10 +8,12 @@ import SignIn from "@/pages/auth/signin";
 import SignUp from "@/pages/auth/signup";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/dashboard";
+import Accounts from "@/pages/accounts";
 import AddTrade from "@/pages/add-trade";
 import Portfolio from "@/pages/portfolio";
 import Journal from "@/pages/journal";
 import AIInsights from "@/pages/ai-insights";
+import SocialTrading from "@/pages/social-trading";
 import RiskManagement from "@/pages/risk-management";
 import Education from "@/pages/education";
 import Sidebar from "@/components/layout/sidebar";
@@ -35,12 +37,32 @@ function AppRouter() {
           </div>
         )}
       </Route>
+      <Route path="/accounts">
+        {() => (
+          <div className="flex h-screen overflow-hidden">
+            <Sidebar />
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <Accounts />
+            </div>
+          </div>
+        )}
+      </Route>
       <Route path="/add-trade">
         {() => (
           <div className="flex h-screen overflow-hidden">
             <Sidebar />
             <div className="flex-1 flex flex-col overflow-hidden">
               <AddTrade />
+            </div>
+          </div>
+        )}
+      </Route>
+      <Route path="/social-trading">
+        {() => (
+          <div className="flex h-screen overflow-hidden">
+            <Sidebar />
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <SocialTrading />
             </div>
           </div>
         )}

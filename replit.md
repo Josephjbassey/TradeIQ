@@ -1,6 +1,15 @@
 # Overview
 
-TradeIQ is an AI-powered trading journal application built with React, Express, and TypeScript. The platform helps traders track their trades, analyze performance, and receive AI-generated insights to improve their trading strategies. The application features a comprehensive dashboard, trade management, portfolio analytics, risk assessment tools, and educational resources.
+TradeIQ is a comprehensive AI-powered trading journal platform built with React, Express, and TypeScript. The platform combines advanced trading analytics, multi-account management, social trading features, and AI-driven insights to help traders at all levels improve their performance. 
+
+## Recent Major Updates (August 2025)
+- ✅ Migrated to PostgreSQL database with full multi-account support
+- ✅ Implemented comprehensive authentication system (signin/signup)
+- ✅ Built advanced account management with multi-broker support
+- ✅ Created social trading platform with trader discovery and copy trading
+- ✅ Enhanced database schema with social features (follows, trade copying, trader profiles)
+- ✅ Developed modern landing page with feature showcase
+- ✅ Integrated comprehensive API endpoints for all major features
 
 # User Preferences
 
