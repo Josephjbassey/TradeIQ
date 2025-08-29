@@ -1,10 +1,17 @@
+import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
+import { createServer, type Server } from "http";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Basic health check
+app.get("/health", (_req, res) => {
+  res.status(200).json({ ok: true });
+});
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -37,35 +44,49 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  const server = await registerRoutes(app);
+  try {
+    // Check for required environment variables
+    if (!process.env.DATABASE_URL) {
+      throw new Error("DATABASE_URL must be set in your .env file.");
+    }
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+  log("DATABASE_URL present: yes", "startup");
 
-    res.status(status).json({ message });
-    throw err;
-  });
+  // Register routes on the Express app
+  registerRoutes(app);
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
-  }
+    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+      const status = err.status || err.statusCode || 500;
+      const message = err.message || "Internal Server Error";
 
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || '5000', 10);
+      res.status(status).json({ message });
+      throw err;
+    });
+
+
+    // Create an HTTP server for HMR and listening
+    const server: Server = createServer(app);
+
+    // Setup Vite in development, serve static in production
+    if (app.get("env") === "development") {
+      log("initializing Vite dev middleware", "startup");
+      await setupVite(app, server);
+      log("Vite dev middleware ready", "startup");
+    } else {
+      serveStatic(app);
+    }
+
+    // Use PORT from env or default to 5000
+    const port = parseInt(process.env.PORT || '5000', 10);
   server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
-  });
+      port,
+      host: "0.0.0.0",
+      reusePort: true,
+    }, () => {
+      log(`serving on port ${port}`);
+    });
+  } catch (err) {
+  console.error("Server failed to start:", err);
+    process.exit(1);
+  }
 })();

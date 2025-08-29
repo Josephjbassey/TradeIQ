@@ -23,8 +23,8 @@ function AppRouter() {
     <Switch>
       {/* Public Routes */}
       <Route path="/" component={Landing} />
-      <Route path="/signin" component={SignIn} />
-      <Route path="/signup" component={SignUp} />
+      <Route path="/auth/signin" component={SignIn} />
+      <Route path="/auth/signup" component={SignUp} />
       
       {/* Protected Routes with Sidebar */}
       <Route path="/dashboard">
