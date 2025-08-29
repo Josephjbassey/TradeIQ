@@ -1,3 +1,7 @@
+import 'dotenv/config';
+// Set a dummy DATABASE_URL for testing purposes
+process.env.DATABASE_URL = 'postgresql://user:password@host:port/database';
+
 import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
 import { app, setupApp } from './index';
