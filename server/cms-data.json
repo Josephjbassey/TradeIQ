@@ -1,0 +1,62 @@
+{
+  "pricing": {
+    "headline": "Simple, transparent pricing",
+    "subheadline": "Start free. Upgrade when you're ready.",
+    "plans": [
+      {
+        "id": "free",
+        "name": "Free",
+        "price": 0,
+        "period": "mo",
+        "features": [
+          "Up to 50 trades/month",
+          "Basic analytics",
+          "Manual trade entry",
+          "Community access"
+        ],
+        "cta": "Get started",
+        "popular": false
+      },
+      {
+        "id": "pro",
+        "name": "Pro",
+        "price": 19,
+        "period": "mo",
+        "features": [
+          "Unlimited trades",
+          "Advanced analytics",
+          "AI insights",
+          "Broker integrations",
+          "Priority support"
+        ],
+        "cta": "Start 14‑day trial",
+        "popular": true
+      },
+      {
+        "id": "team",
+        "name": "Team",
+        "price": 49,
+        "period": "mo",
+        "features": [
+          "Up to 5 users",
+          "Shared dashboards",
+          "Copy trading tools",
+          "Admin controls",
+          "SLA support"
+        ],
+        "cta": "Contact sales",
+        "popular": false
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Can I try Pro for free?",
+        "a": "Yes, we offer a 14‑day free trial. Cancel anytime."
+      },
+      {
+        "q": "Do you offer discounts?",
+        "a": "Annual plans include a 20% discount."
+      }
+    ]
+  }
+}
