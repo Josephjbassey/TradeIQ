@@ -14,7 +14,9 @@ import {
   Follow,
   InsertFollow,
   TradeCopy,
-  InsertTradeCopy
+  InsertTradeCopy,
+  ResetToken,
+  InsertResetToken
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql, count, avg, sum, max, min, or, asc, ne } from "drizzle-orm";
@@ -68,6 +70,11 @@ export interface IStorage {
   getTradeCopies(userId: string, type: "from" | "to"): Promise<TradeCopy[]>;
   createTradeCopy(copy: InsertTradeCopy): Promise<TradeCopy>;
   updateTradeCopy(id: string, updates: Partial<TradeCopy>): Promise<TradeCopy | undefined>;
+
+  // Auth helpers
+  createResetToken(token: InsertResetToken): Promise<ResetToken>;
+  getResetToken(token: string): Promise<ResetToken | undefined>;
+  markResetTokenUsed(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -134,25 +141,32 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(schema.tradingAccounts)
       .where(eq(schema.tradingAccounts.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Trade methods
   async getTrades(userId?: string, accountId?: string): Promise<Trade[]> {
-    let query = db.select().from(schema.trades);
+    const conditions = [];
     
-    if (userId && accountId) {
-      query = query.where(and(
-        eq(schema.trades.userId, userId),
-        eq(schema.trades.accountId, accountId)
-      ));
-    } else if (userId) {
-      query = query.where(eq(schema.trades.userId, userId));
-    } else if (accountId) {
-      query = query.where(eq(schema.trades.accountId, accountId));
+    if (userId) {
+      conditions.push(eq(schema.trades.userId, userId));
+    }
+    if (accountId) {
+      conditions.push(eq(schema.trades.accountId, accountId));
     }
     
-    return await query.orderBy(desc(schema.trades.entryDate));
+    if (conditions.length > 0) {
+      return await db
+        .select()
+        .from(schema.trades)
+        .where(conditions.length === 1 ? conditions[0] : and(...conditions))
+        .orderBy(desc(schema.trades.entryDate));
+    }
+    
+    return await db
+      .select()
+      .from(schema.trades)
+      .orderBy(desc(schema.trades.entryDate));
   }
 
   async getTrade(id: string): Promise<Trade | undefined> {
@@ -184,25 +198,32 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(schema.trades)
       .where(eq(schema.trades.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // AI Analysis methods
   async getAIAnalyses(userId?: string, accountId?: string): Promise<AIAnalysis[]> {
-    let query = db.select().from(schema.aiAnalyses);
+    const conditions = [];
     
-    if (userId && accountId) {
-      query = query.where(and(
-        eq(schema.aiAnalyses.userId, userId),
-        eq(schema.aiAnalyses.accountId, accountId)
-      ));
-    } else if (userId) {
-      query = query.where(eq(schema.aiAnalyses.userId, userId));
-    } else if (accountId) {
-      query = query.where(eq(schema.aiAnalyses.accountId, accountId));
+    if (userId) {
+      conditions.push(eq(schema.aiAnalyses.userId, userId));
+    }
+    if (accountId) {
+      conditions.push(eq(schema.aiAnalyses.accountId, accountId));
     }
     
-    return await query.orderBy(desc(schema.aiAnalyses.createdAt));
+    if (conditions.length > 0) {
+      return await db
+        .select()
+        .from(schema.aiAnalyses)
+        .where(conditions.length === 1 ? conditions[0] : and(...conditions))
+        .orderBy(desc(schema.aiAnalyses.createdAt));
+    }
+    
+    return await db
+      .select()
+      .from(schema.aiAnalyses)
+      .orderBy(desc(schema.aiAnalyses.createdAt));
   }
 
   async getAIAnalysis(id: string): Promise<AIAnalysis | undefined> {
@@ -231,20 +252,33 @@ export class DatabaseStorage implements IStorage {
 
   // Portfolio methods
   async getPortfolioSnapshots(userId?: string, accountId?: string): Promise<PortfolioSnapshot[]> {
-    let query = db.select().from(schema.portfolioSnapshots);
-    
     if (userId && accountId) {
-      query = query.where(and(
-        eq(schema.portfolioSnapshots.userId, userId),
-        eq(schema.portfolioSnapshots.accountId, accountId)
-      ));
+      return await db
+        .select()
+        .from(schema.portfolioSnapshots)
+        .where(and(
+          eq(schema.portfolioSnapshots.userId, userId),
+          eq(schema.portfolioSnapshots.accountId, accountId)
+        ))
+        .orderBy(desc(schema.portfolioSnapshots.date));
     } else if (userId) {
-      query = query.where(eq(schema.portfolioSnapshots.userId, userId));
+      return await db
+        .select()
+        .from(schema.portfolioSnapshots)
+        .where(eq(schema.portfolioSnapshots.userId, userId))
+        .orderBy(desc(schema.portfolioSnapshots.date));
     } else if (accountId) {
-      query = query.where(eq(schema.portfolioSnapshots.accountId, accountId));
+      return await db
+        .select()
+        .from(schema.portfolioSnapshots)
+        .where(eq(schema.portfolioSnapshots.accountId, accountId))
+        .orderBy(desc(schema.portfolioSnapshots.date));
     }
     
-    return await query.orderBy(desc(schema.portfolioSnapshots.date));
+    return await db
+      .select()
+      .from(schema.portfolioSnapshots)
+      .orderBy(desc(schema.portfolioSnapshots.date));
   }
 
   async getLatestPortfolioSnapshot(userId?: string, accountId?: string): Promise<PortfolioSnapshot | undefined> {
@@ -353,7 +387,7 @@ export class DatabaseStorage implements IStorage {
         eq(schema.follows.followerId, followerId),
         eq(schema.follows.followingId, followingId)
       ));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Trade copy methods
@@ -382,6 +416,21 @@ export class DatabaseStorage implements IStorage {
       .where(eq(schema.tradeCopies.id, id))
       .returning();
     return copy || undefined;
+  }
+
+  // Auth helpers
+  async createResetToken(insertToken: InsertResetToken): Promise<ResetToken> {
+    const [row] = await db.insert(schema.resetTokens).values(insertToken).returning();
+    return row;
+  }
+
+  async getResetToken(token: string): Promise<ResetToken | undefined> {
+    const [row] = await db.select().from(schema.resetTokens).where(eq(schema.resetTokens.token, token));
+    return row || undefined;
+  }
+
+  async markResetTokenUsed(id: string): Promise<void> {
+    await db.update(schema.resetTokens).set({ used: true }).where(eq(schema.resetTokens.id, id));
   }
 
   // Portfolio calculation methods

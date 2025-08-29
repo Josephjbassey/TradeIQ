@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 type Plan = {
   id: string;
@@ -20,9 +22,44 @@ type PricingData = {
 };
 
 export default function Pricing() {
+  const { toast } = useToast();
   const { data, isLoading } = useQuery<PricingData>({
     queryKey: ["/api/cms/pricing"],
   });
+  const [processingPlan, setProcessingPlan] = useState<string | null>(null);
+
+  async function startCheckout(plan: Plan) {
+    try {
+      if (plan.price === 0) {
+        window.location.href = "/auth/signup";
+        return;
+      }
+      setProcessingPlan(plan.id);
+      const res = await fetch("/api/payments/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          planId: plan.id,
+          successUrl: `${window.location.origin}/dashboard`,
+          cancelUrl: `${window.location.origin}/pricing`,
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Checkout failed (${res.status})`);
+      }
+      const { url } = await res.json();
+      if (url) {
+        window.location.href = url;
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (e: any) {
+      toast({ title: "Checkout error", description: e.message || String(e), variant: "destructive" });
+    } finally {
+      setProcessingPlan(null);
+    }
+  }
 
   if (isLoading) {
     return (
@@ -66,7 +103,9 @@ export default function Pricing() {
                   ))}
                 </ul>
 
-                <Button className="mt-6 w-full">{p.cta}</Button>
+                <Button className="mt-6 w-full" onClick={() => startCheckout(p)} disabled={processingPlan === p.id}>
+                  {processingPlan === p.id ? "Redirecting…" : p.cta}
+                </Button>
               </CardContent>
             </Card>
           ))}

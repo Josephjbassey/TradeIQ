@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Landing from "@/pages/landing";
 import SignIn from "@/pages/auth/signin";
 import SignUp from "@/pages/auth/signup";
+import ForgotPassword from "@/pages/auth/forgot-password";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/dashboard";
 import Accounts from "@/pages/accounts";
@@ -31,6 +32,7 @@ function AppRouter() {
       <Route path="/" component={Landing} />
       <Route path="/auth/signin" component={SignIn} />
       <Route path="/auth/signup" component={SignUp} />
+  <Route path="/auth/forgot-password" component={ForgotPassword} />
   <Route path="/reset" component={ResetPassword} />
       
       {/* Protected Routes with Sidebar */}

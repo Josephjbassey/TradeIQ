@@ -11,6 +11,8 @@ export const users = pgTable("users", {
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   avatar: text("avatar"),
+  // Optional password hash for local auth (pbkdf2 or bcrypt). Not required in demo.
+  passwordHash: text("password_hash"),
   timeZone: text("time_zone").default("UTC"),
   currency: text("currency").default("USD"),
   tradingExperience: text("trading_experience"), // "beginner" | "intermediate" | "advanced"
@@ -102,6 +104,16 @@ export const aiAnalyses = pgTable("ai_analyses", {
   score: integer("score"), // 1-10 rating
   categories: text("categories").array(), // ["risk", "timing", "strategy", "psychology"]
   metrics: jsonb("metrics"), // Key performance metrics analyzed
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// Password reset tokens
+export const resetTokens = pgTable("reset_tokens", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  token: text("token").notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  used: boolean("used").default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -263,6 +275,11 @@ export const insertPortfolioSnapshotSchema = createInsertSchema(portfolioSnapsho
   date: true
 });
 
+export const insertResetTokenSchema = createInsertSchema(resetTokens).omit({
+  id: true,
+  createdAt: true
+});
+
 export const insertTradeCopySchema = createInsertSchema(tradeCopies).omit({ 
   id: true, 
   createdAt: true 
@@ -297,3 +314,5 @@ export type Follow = typeof follows.$inferSelect;
 export type InsertFollow = z.infer<typeof insertFollowSchema>;
 export type TraderProfile = typeof traderProfiles.$inferSelect;
 export type InsertTraderProfile = z.infer<typeof insertTraderProfileSchema>;
+export type ResetToken = typeof resetTokens.$inferSelect;
+export type InsertResetToken = z.infer<typeof insertResetTokenSchema>;
