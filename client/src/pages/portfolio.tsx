@@ -8,18 +8,14 @@ export default function Portfolio() {
     queryKey: ["/api/portfolio/current"],
   });
 
-  // Mock performance data - in real app this would come from snapshots
-  const performanceData = [
-    { date: "Oct 1", value: 10000 },
-    { date: "Oct 8", value: 10250 },
-    { date: "Oct 15", value: 9800 },
-    { date: "Oct 22", value: 10500 },
-    { date: "Oct 29", value: 10800 },
-    { date: "Nov 5", value: 11200 },
-    { date: "Nov 12", value: 10900 },
-    { date: "Nov 19", value: 11400 },
-    { date: "Nov 25", value: portfolio?.totalValue || 10000 },
-  ];
+  const { data: perfSeries = [] } = useQuery<{ date: string; value: number }[]>({
+    queryKey: ["/api/portfolio/snapshots"],
+  });
+
+  // Use API-derived performance series (fallback to one point from current value)
+  const performanceData = (perfSeries && perfSeries.length > 0)
+    ? perfSeries
+    : [{ date: new Date().toLocaleDateString(), value: portfolio?.totalValue || 10000 }];
 
   if (isLoading) {
     return (

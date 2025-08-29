@@ -31,7 +31,7 @@ export default function Landing() {
             <nav className="hidden md:flex space-x-8">
               <a href="#features" className="text-gray-600 hover:text-gray-900">Features</a>
               <a href="#social" className="text-gray-600 hover:text-gray-900">Social Trading</a>
-              <a href="#pricing" className="text-gray-600 hover:text-gray-900">Pricing</a>
+              <a href="/pricing" className="text-gray-600 hover:text-gray-900">Pricing</a>
             </nav>
             <div className="flex items-center space-x-4">
               <Link href="/auth/signin">
@@ -435,18 +435,18 @@ export default function Landing() {
               <ul className="space-y-2">
                 <li><a href="#features" className="hover:text-white">Features</a></li>
                 <li><a href="#social" className="hover:text-white">Social Trading</a></li>
-                <li><a href="#pricing" className="hover:text-white">Pricing</a></li>
-                <li><a href="#" className="hover:text-white">Security</a></li>
+                <li><a href="/pricing" className="hover:text-white">Pricing</a></li>
+                <li><a href="/page/security" className="hover:text-white">Security</a></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-semibold text-white mb-4">Support</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="hover:text-white">Help Center</a></li>
-                <li><a href="#" className="hover:text-white">Contact Us</a></li>
-                <li><a href="#" className="hover:text-white">Community</a></li>
-                <li><a href="#" className="hover:text-white">API Docs</a></li>
+                <li><a href="/page/help" className="hover:text-white">Help Center</a></li>
+                <li><a href="/page/contact" className="hover:text-white">Contact Us</a></li>
+                <li><a href="/page/community" className="hover:text-white">Community</a></li>
+                <li><a href="/page/docs" className="hover:text-white">API Docs</a></li>
               </ul>
             </div>
           </div>
