@@ -16,6 +16,12 @@ import AIInsights from "@/pages/ai-insights";
 import SocialTrading from "@/pages/social-trading";
 import RiskManagement from "@/pages/risk-management";
 import Education from "@/pages/education";
+import Pricing from "@/pages/pricing";
+import GatewayTimeout from "@/pages/gateway-timeout";
+import AdminCMS from "@/pages/admin-cms";
+import Page from "@/pages/page";
+import Profile from "@/pages/profile";
+import ResetPassword from "@/pages/reset-password";
 import Sidebar from "@/components/layout/sidebar";
 
 function AppRouter() {
@@ -25,6 +31,7 @@ function AppRouter() {
       <Route path="/" component={Landing} />
       <Route path="/auth/signin" component={SignIn} />
       <Route path="/auth/signup" component={SignUp} />
+  <Route path="/reset" component={ResetPassword} />
       
       {/* Protected Routes with Sidebar */}
       <Route path="/dashboard">
@@ -97,6 +104,16 @@ function AppRouter() {
           </div>
         )}
       </Route>
+      <Route path="/profile">
+        {() => (
+          <div className="flex h-screen overflow-hidden">
+            <Sidebar />
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <Profile />
+            </div>
+          </div>
+        )}
+      </Route>
       <Route path="/risk-management">
         {() => (
           <div className="flex h-screen overflow-hidden">
@@ -107,6 +124,10 @@ function AppRouter() {
           </div>
         )}
       </Route>
+  <Route path="/pricing" component={Pricing} />
+  <Route path="/504" component={GatewayTimeout} />
+  <Route path="/admin/cms" component={AdminCMS} />
+  <Route path="/page/:slug" component={Page} />
       <Route path="/education">
         {() => (
           <div className="flex h-screen overflow-hidden">

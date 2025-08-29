@@ -37,9 +37,11 @@ export default function Header({ title, subtitle }: HeaderProps) {
               New Trade
             </Button>
           </Link>
-          <Avatar className="w-8 h-8" data-testid="user-avatar">
-            <AvatarFallback className="bg-gray-300">U</AvatarFallback>
-          </Avatar>
+          <Link href="/profile">
+            <Avatar className="w-8 h-8 cursor-pointer" data-testid="user-avatar">
+              <AvatarFallback className="bg-gray-300">U</AvatarFallback>
+            </Avatar>
+          </Link>
         </div>
       </div>
     </header>

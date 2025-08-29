@@ -116,17 +116,27 @@ export default function AIInsights() {
                       {analysis.analysisType === 'portfolio_analysis' ? 'Portfolio Analysis' : 'Trade Review'}
                     </h3>
                   </div>
-                  <Badge 
-                    variant="secondary" 
-                    className="text-xs"
-                    data-testid={`analysis-confidence-${index}`}
-                  >
-                    {Math.round(Number(analysis.confidence) * 100)}% Confidence
-                  </Badge>
+                  {typeof analysis.confidence === 'number' ? (
+                    <Badge 
+                      variant="secondary" 
+                      className="text-xs"
+                      data-testid={`analysis-confidence-${index}`}
+                    >
+                      {Math.round(Number(analysis.confidence) * 100)}% Confidence
+                    </Badge>
+                  ) : analysis.score ? (
+                    <Badge 
+                      variant="secondary" 
+                      className="text-xs"
+                      data-testid={`analysis-score-${index}`}
+                    >
+                      Score {analysis.score}/10
+                    </Badge>
+                  ) : null}
                 </div>
 
                 <div className="space-y-4">
-                  {analysis.analysisType === 'portfolio_analysis' && analysis.insights ? (
+                  {analysis.analysisType === 'portfolio' && analysis.insights ? (
                     <>
                       {analysis.insights.overallPerformance && (
                         <div className="bg-blue-50 border-l-4 border-primary p-4 rounded">

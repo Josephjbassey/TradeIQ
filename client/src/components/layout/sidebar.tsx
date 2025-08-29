@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Add Trade", href: "/add-trade", icon: Plus },
   { name: "Portfolio", href: "/portfolio", icon: BarChart3 },
   { name: "Trade Journal", href: "/journal", icon: BookOpen },

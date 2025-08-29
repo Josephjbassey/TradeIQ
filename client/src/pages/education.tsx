@@ -155,6 +155,8 @@ export default function Education() {
     <div className="flex-1 flex flex-col overflow-hidden">
       <Header title="Education" subtitle="Learn and improve your trading skills" />
       <main className="flex-1 overflow-y-auto p-6">
+  {/* Recommended learning from CMS */}
+  <CMSRecommendations />
         
         <Tabs defaultValue="courses" className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-8">
@@ -372,5 +374,28 @@ export default function Education() {
         </Tabs>
       </main>
     </div>
+  );
+}
+
+function CMSRecommendations() {
+  const { data } = useQuery<any>({ queryKey: ["/api/cms/education"] });
+  const recs = data?.recommendations || [];
+  if (!recs.length) return null;
+  return (
+    <Card className="bg-white rounded-xl shadow-sm border border-gray-100 mb-8">
+      <CardHeader>
+        <CardTitle>Recommended Learning</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {recs.map((rec: any) => (
+            <div key={rec.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all hover:-translate-y-0.5">
+              <h4 className="font-medium text-gray-900 mb-2">{rec.title}</h4>
+              <p className="text-sm text-gray-600">{rec.body}</p>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

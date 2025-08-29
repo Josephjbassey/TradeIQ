@@ -48,14 +48,14 @@ export default function AIInsightsWidget() {
             <div 
               key={insight.id}
               className={`border-l-4 p-4 rounded ${
-                insight.analysisType === 'portfolio_analysis' 
+                insight.analysisType === 'portfolio' 
                   ? 'bg-blue-50 border-primary' 
                   : 'bg-yellow-50 border-warning'
               }`}
               data-testid={`insight-${index}`}
             >
               <h4 className="font-medium text-gray-900 mb-1">
-                {insight.analysisType === 'portfolio_analysis' ? 'Portfolio Analysis' : 'Trade Review'}
+                {insight.analysisType === 'portfolio' ? 'Portfolio Analysis' : 'Trade Review'}
               </h4>
               <p className="text-sm text-gray-600">
                 {insight.recommendations 
