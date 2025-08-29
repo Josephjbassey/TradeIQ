@@ -23,7 +23,7 @@ import AdminCMS from "@/pages/admin-cms";
 import Page from "@/pages/page";
 import Profile from "@/pages/profile";
 import ResetPassword from "@/pages/reset-password";
-import Sidebar from "@/components/layout/sidebar";
+import AppLayout from "./components/layout/AppLayout";
 
 function AppRouter() {
   return (
@@ -32,115 +32,67 @@ function AppRouter() {
       <Route path="/" component={Landing} />
       <Route path="/auth/signin" component={SignIn} />
       <Route path="/auth/signup" component={SignUp} />
-  <Route path="/auth/forgot-password" component={ForgotPassword} />
-  <Route path="/reset" component={ResetPassword} />
-      
+      <Route path="/auth/forgot-password" component={ForgotPassword} />
+      <Route path="/reset" component={ResetPassword} />
+
       {/* Protected Routes with Sidebar */}
       <Route path="/dashboard">
-        {() => (
-          <div className="flex h-screen overflow-hidden">
-            <Sidebar />
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <Dashboard />
-            </div>
-          </div>
-        )}
+        <AppLayout>
+          <Dashboard />
+        </AppLayout>
       </Route>
       <Route path="/accounts">
-        {() => (
-          <div className="flex h-screen overflow-hidden">
-            <Sidebar />
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <Accounts />
-            </div>
-          </div>
-        )}
+        <AppLayout>
+          <Accounts />
+        </AppLayout>
       </Route>
       <Route path="/add-trade">
-        {() => (
-          <div className="flex h-screen overflow-hidden">
-            <Sidebar />
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <AddTrade />
-            </div>
-          </div>
-        )}
+        <AppLayout>
+          <AddTrade />
+        </AppLayout>
       </Route>
       <Route path="/social-trading">
-        {() => (
-          <div className="flex h-screen overflow-hidden">
-            <Sidebar />
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <SocialTrading />
-            </div>
-          </div>
-        )}
+        <AppLayout>
+          <SocialTrading />
+        </AppLayout>
       </Route>
       <Route path="/portfolio">
-        {() => (
-          <div className="flex h-screen overflow-hidden">
-            <Sidebar />
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <Portfolio />
-            </div>
-          </div>
-        )}
+        <AppLayout>
+          <Portfolio />
+        </AppLayout>
       </Route>
       <Route path="/journal">
-        {() => (
-          <div className="flex h-screen overflow-hidden">
-            <Sidebar />
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <Journal />
-            </div>
-          </div>
-        )}
+        <AppLayout>
+          <Journal />
+        </AppLayout>
       </Route>
       <Route path="/ai-insights">
-        {() => (
-          <div className="flex h-screen overflow-hidden">
-            <Sidebar />
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <AIInsights />
-            </div>
-          </div>
-        )}
+        <AppLayout>
+          <AIInsights />
+        </AppLayout>
       </Route>
       <Route path="/profile">
-        {() => (
-          <div className="flex h-screen overflow-hidden">
-            <Sidebar />
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <Profile />
-            </div>
-          </div>
-        )}
+        <AppLayout>
+          <Profile />
+        </AppLayout>
       </Route>
       <Route path="/risk-management">
-        {() => (
-          <div className="flex h-screen overflow-hidden">
-            <Sidebar />
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <RiskManagement />
-            </div>
-          </div>
-        )}
+        <AppLayout>
+          <RiskManagement />
+        </AppLayout>
       </Route>
-  <Route path="/pricing" component={Pricing} />
-  <Route path="/504" component={GatewayTimeout} />
-  <Route path="/admin/cms" component={AdminCMS} />
-  <Route path="/page/:slug" component={Page} />
       <Route path="/education">
-        {() => (
-          <div className="flex h-screen overflow-hidden">
-            <Sidebar />
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <Education />
-            </div>
-          </div>
-        )}
+        <AppLayout>
+          <Education />
+        </AppLayout>
       </Route>
-      
+
+      {/* Other Routes */}
+      <Route path="/pricing" component={Pricing} />
+      <Route path="/504" component={GatewayTimeout} />
+      <Route path="/admin/cms" component={AdminCMS} />
+      <Route path="/page/:slug" component={Page} />
+
       {/* 404 Route */}
       <Route component={NotFound} />
     </Switch>
