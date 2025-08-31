@@ -35,4 +35,10 @@ export default defineConfig({
       deny: ["**/.*"],
     },
   },
+  test: {
+    projects: [
+      './client/vitest.config.ts',
+      './server/vitest.config.ts',
+    ],
+  },
 });
