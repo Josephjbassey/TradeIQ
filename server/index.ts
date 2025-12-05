@@ -2,7 +2,10 @@ import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { registerRoutes } from "./routes/index";
+import { requestLogger } from "./logging";
+import { errorHandler } from "./errors";
 import { setupVite, serveStatic, log } from "./vite";
+import { config } from "./config";
 
 const app = express();
 
@@ -15,50 +18,12 @@ export async function setupApp() {
     res.status(200).json({ ok: true });
   });
 
-  app.use((req, res, next) => {
-    const start = Date.now();
-    const path = req.path;
-    let capturedJsonResponse: Record<string, any> | undefined = undefined;
-
-    const originalResJson = res.json;
-    res.json = function (bodyJson, ...args) {
-      capturedJsonResponse = bodyJson;
-      return originalResJson.apply(res, [bodyJson, ...args]);
-    };
-
-    res.on("finish", () => {
-      const duration = Date.now() - start;
-      if (path.startsWith("/api")) {
-        let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-        if (capturedJsonResponse) {
-          logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-        }
-
-        if (logLine.length > 80) {
-          logLine = logLine.slice(0, 79) + "…";
-        }
-
-        log(logLine);
-      }
-    });
-
-    next();
-  });
-
-  // Check for required environment variables
-  if (!process.env.DATABASE_URL) {
-    throw new Error("DATABASE_URL must be set in your .env file.");
-  }
-  log("DATABASE_URL present: yes", "startup");
+  app.use(requestLogger);
 
   // Register routes on the Express app
   registerRoutes(app);
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-    res.status(status).json({ message });
-  });
+  app.use(errorHandler);
 
   return app;
 }
@@ -77,7 +42,7 @@ export async function startServer() {
   }
 
   // Use PORT from env or default to 5000
-  const port = parseInt(process.env.PORT || '5000', 10);
+  const port = config.PORT;
   server.listen({
     port,
     host: "0.0.0.0",
